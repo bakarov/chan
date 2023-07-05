@@ -1,0 +1,17 @@
+{% from 'macroses/submit_post.html' import submit_post_macro %}
+{% from 'macroses/thread.html' import thread_macro %}
+
+{% extends "base.html" %}
+
+{% block content %}
+
+{{ submit_post_macro(true) }}
+
+{% if threads %}
+    {% for thread in threads %}
+        {% set show_full_thread = false %}
+        {{ thread_macro(thread, show_full_thread) }}
+    {% endfor %}
+{% endif %}
+
+{% endblock %}
