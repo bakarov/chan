@@ -10,7 +10,7 @@ from blueprints.thread import thread_bp as thread_blueprint
 
 from database.database import add_post, create_table
 
-from globals import DATABASE_PATH, CURSOR_PATH, ARTIFACTS_DIR
+from globals import DATABASE_PATH, CURSOR_PATH, ARTIFACTS_DIR, UPLOADS_DIR
 
 
 if __name__ == '__main__':
@@ -20,6 +20,7 @@ if __name__ == '__main__':
     app.register_blueprint(home_blueprint)
     app.register_blueprint(thread_blueprint)
 
+    os.makedirs(UPLOADS_DIR, exist_ok=True)
     os.makedirs(ARTIFACTS_DIR, exist_ok=True)
 
     database_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), os.path.join('..', DATABASE_PATH))
