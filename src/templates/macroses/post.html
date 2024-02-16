@@ -1,5 +1,6 @@
 {% from 'macroses/image_viewer.html' import image_viewer_macro %}
 {% from 'macroses/reply_viewer.html' import reply_viewer_macro %}
+{% from 'macroses/post_metadata.html' import post_metadata_macro %}
 
 {% macro post_macro(post, post_id, reply_view_recursion_cycle) %}
 
@@ -7,9 +8,7 @@
     <div>Post not found!</div>
 {% else %}
     <div class="mypost">
-        <div class="metadata_container">
-            <a style="font-size: 13px">{{ post['date_time'] }} <i>(#{{ post['id'] }})</i></a>
-        </div>
+        {{ post_metadata_macro(post['date_time'], post['id']) }}
         <div class="text_and_images_container">
             {% if post.images|length > 0 %}
                 <div class="images_container">
@@ -53,11 +52,6 @@
         border-style: solid;
         border-width: 0.1px;
         border-color: grey;
-    }
-
-    .metadata_container {
-        margin-left: 0px;
-        margin-bottom: 0px;
     }
 
     .text_and_images_container {
