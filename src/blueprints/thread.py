@@ -30,6 +30,7 @@ def thread(thread_id):
     
     thread = get_thread_by_id(thread_id)
     rendered_thread = render_thread(thread)
+    rendered_thread['thread_id'] = thread_id
     
     return render_template("thread.html", thread=rendered_thread)
 

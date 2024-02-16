@@ -31,5 +31,5 @@ def index():
     
     threads = get_threads()
     rendered_threads = render_threads(threads)
-    
+
     return render_template('index.html', threads=rendered_threads)

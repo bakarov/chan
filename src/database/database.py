@@ -47,9 +47,10 @@ def get_threads():
     thread_list = []
 
     conn = get_db_connection()
-    threads = conn.execute('SELECT {} FROM {};'.format(THREADS_ID, THREADS_TABLE_NAME)).fetchall()
+    threads = conn.execute('SELECT * FROM {};'.format( THREADS_TABLE_NAME)).fetchall()
     for thread in threads:
         thread_id = dict(thread)[THREADS_ID]
+
         posts = conn.execute("SELECT * FROM {} WHERE {}=?;".format(POSTS_TABLE_NAME, POSTS_THREAD_ID), (thread_id, )).fetchall()
         post_list = []
         for post in posts: 
@@ -57,7 +58,10 @@ def get_threads():
             db_images = conn.execute("SELECT * FROM {} WHERE {}=?;".format(IMAGES_TABLE_NAME, IMAGES_POST_ID), (post[POSTS_ID], )).fetchall()
             post['images'] = [dict(image) for image in db_images]
             post_list.append(post)
-        thread_list.append(post_list)
+        
+        thread_data = dict(thread)
+        thread_data['post_list'] = post_list
+        thread_list.append(thread_data)
    
     conn.close()
     return thread_list
@@ -84,7 +88,10 @@ def get_thread_by_id(thread_id):
         post['images'] = [dict(image) for image in images]
         post_list.append(post)
     conn.close()
-    return post_list
+    
+    thread = {}
+    thread['post_list'] = post_list
+    return thread
 
 def get_last_thread_id(connection):
     try:
@@ -111,7 +118,7 @@ def get_last_post_in_thread_id(connection, thread_id):
         return 0
 
 def insert_thread_to_db(connection, title, original_post_id):
-    connection.execute("INSERT INTO {} VALUES (NULL, ?, ?)".format(THREADS_TABLE_NAME), (title, original_post_id))
+    connection.execute("INSERT INTO {} VALUES (NULL, ?, ?)".format(THREADS_TABLE_NAME), (original_post_id, title))
 
 def insert_post_to_db(connection, post_in_thread_id, thread_id, post_content, sender_ip, num_images, is_deleted=0):
     connection.execute('INSERT INTO {} VALUES (NULL, ?, ?, CURRENT_TIMESTAMP, ?, ?, ?, ?)'.format(POSTS_TABLE_NAME),

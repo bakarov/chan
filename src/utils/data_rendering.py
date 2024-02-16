@@ -10,10 +10,8 @@ def render_threads(threads):
     return rendered_threads
 
 def render_thread(thread):
-    rendered_thread = []
-    for post in thread:
-        rendered_post = render_post(post)
-        rendered_thread.append(rendered_post)
+    rendered_thread = thread
+    rendered_thread['post_list'] = [render_post(post) for post in thread['post_list']]
     return rendered_thread
 
 def render_post(post):
