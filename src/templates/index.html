@@ -7,10 +7,12 @@
 
 {{ submit_post_macro(true) }}
 
+{% set threads_count = threads|length %}
+
 {% if threads %}
-    {% for thread in threads %}
+    {% for i in range(threads_count) %}
         {% set show_full_thread = false %}
-        {{ thread_macro(thread, show_full_thread) }}
+        {{ thread_macro(threads[i], posts[i], show_full_thread) }}
     {% endfor %}
 {% endif %}
 

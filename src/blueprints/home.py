@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, url_for, flash, redirect
-from database.database import get_threads, add_post
+from database.database import fetch_all_threads_and_posts, add_post
 from utils.data_parsers import parse_content, parse_request_images
-from utils.data_rendering import render_threads
+from utils.data_rendering import render_all_posts
 
 home = Blueprint('home', __name__)
 
@@ -29,7 +29,7 @@ def index():
   
         return redirect(url_for('home.index'))
     
-    threads = get_threads()
-    rendered_threads = render_threads(threads)
+    threads_data, posts_data = fetch_all_threads_and_posts()
+    rendered_posts_data = render_all_posts(posts_data)
 
-    return render_template('index.html', threads=rendered_threads)
+    return render_template('index.html', threads=threads_data, posts=rendered_posts_data)

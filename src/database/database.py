@@ -43,28 +43,30 @@ def create_table(connection):
 
     connection.executescript(schema_threads + schema_posts + schema_images)
 
-def get_threads():
-    thread_list = []
+def fetch_all_threads_and_posts():
+    threads_data = []
+    posts_data = []
 
     conn = get_db_connection()
     threads = conn.execute('SELECT * FROM {};'.format( THREADS_TABLE_NAME)).fetchall()
     for thread in threads:
-        thread_id = dict(thread)[THREADS_ID]
+        thread_data = dict(thread)
+        threads_data.append(thread_data)
 
-        posts = conn.execute("SELECT * FROM {} WHERE {}=?;".format(POSTS_TABLE_NAME, POSTS_THREAD_ID), (thread_id, )).fetchall()
-        post_list = []
+        posts = conn.execute("SELECT * FROM {} WHERE {}=?;".format(POSTS_TABLE_NAME, POSTS_THREAD_ID), (thread_data[THREADS_ID], )).fetchall()
+        
+        # at this point probably should select only N posts where N==3 ?
+        posts_list = []
         for post in posts: 
             post = dict(post)
             db_images = conn.execute("SELECT * FROM {} WHERE {}=?;".format(IMAGES_TABLE_NAME, IMAGES_POST_ID), (post[POSTS_ID], )).fetchall()
             post['images'] = [dict(image) for image in db_images]
-            post_list.append(post)
+            posts_list.append(post)
         
-        thread_data = dict(thread)
-        thread_data['post_list'] = post_list
-        thread_list.append(thread_data)
+        posts_data.append(posts_list)
    
     conn.close()
-    return thread_list
+    return threads_data, posts_data
 
 def get_post_by_id(variable):
     conn = get_db_connection()
@@ -78,7 +80,7 @@ def get_post_by_id(variable):
     conn.close()
     return post
 
-def get_thread_by_id(thread_id):
+def get_posts_by_thread_id(thread_id):
     post_list = []
     conn = get_db_connection()
     posts = conn.execute("SELECT * FROM {} WHERE {}=?;".format(POSTS_TABLE_NAME, POSTS_THREAD_ID), (thread_id, )).fetchall()
@@ -88,10 +90,13 @@ def get_thread_by_id(thread_id):
         post['images'] = [dict(image) for image in images]
         post_list.append(post)
     conn.close()
-    
-    thread = {}
-    thread['post_list'] = post_list
-    return thread
+    return post_list
+
+def get_thread_data_by_thread_id(thread_id):
+    conn = get_db_connection()
+    thread_data = dict(conn.execute("SELECT * FROM {} WHERE {}=?;".format(THREADS_TABLE_NAME, THREADS_ID), (thread_id, )).fetchall()[0])
+    conn.close()
+    return thread_data
 
 def get_last_thread_id(connection):
     try:

@@ -2,17 +2,11 @@ import markdown
 
 from database.database import get_post_by_id
 
-def render_threads(threads):
-    rendered_threads = []
-    for thread in threads:
-        rendered_thread = render_thread(thread)
-        rendered_threads.append(rendered_thread)
-    return rendered_threads
+def render_all_posts(posts_data):
+    return [render_thread_posts(thread_posts) for thread_posts in posts_data]
 
-def render_thread(thread):
-    rendered_thread = thread
-    rendered_thread['post_list'] = [render_post(post) for post in thread['post_list']]
-    return rendered_thread
+def render_thread_posts(thread_posts):
+    return [render_post(post) for post in thread_posts]
 
 def render_post(post):
     rendered_post = post

@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, url_for, flash, redirect, send_from_directory
-from database.database import get_thread_by_id, add_post
+from database.database import get_posts_by_thread_id, get_thread_data_by_thread_id, add_post
 from utils.data_parsers import parse_content, parse_request_images
-from utils.data_rendering import render_thread
+from utils.data_rendering import render_thread_posts
 
 from globals import RELATIVE_UPLOADS_DIR
 
@@ -28,9 +28,9 @@ def thread(thread_id):
 
         return redirect(url_for('thread.thread', thread_id=thread_id))
     
-    thread = get_thread_by_id(thread_id)
-    rendered_thread = render_thread(thread)
-    rendered_thread['thread_id'] = thread_id
+    thread_data = get_thread_data_by_thread_id(thread_id)
+    thread_posts = get_posts_by_thread_id(thread_id)
+    rendered_thread_posts = render_thread_posts(thread_posts)
     
-    return render_template("thread.html", thread=rendered_thread)
+    return render_template("thread.html", posts=rendered_thread_posts, thread=thread_data)
 
